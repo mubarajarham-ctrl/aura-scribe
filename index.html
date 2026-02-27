@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Aura Scribe</title>
+<style>
+body {
+  background: #0e0e0e;
+  color: #eee;
+  font-family: Georgia, serif;
+  text-align: center;
+  padding: 20px;
+}
+textarea {
+  width: 90%;
+  height: 120px;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+}
+select, button {
+  padding: 10px;
+  margin: 10px;
+  border-radius: 8px;
+  border: none;
+}
+button {
+  background: #c6a85e;
+  color: black;
+  font-weight: bold;
+}
+#output {
+  margin-top: 30px;
+  text-align: left;
+  white-space: pre-wrap;
+}
+footer {
+  margin-top: 50px;
+  color: #777;
+}
+</style>
+</head>
+<body>
+
+<h1>Aura Scribe</h1>
+<p>AI Novel Generator</p>
+
+<textarea id="prompt" placeholder="Tulis ide cerita lu..."></textarea><br>
+
+<select id="genre">
+<option>Fantasy</option>
+<option>Romance</option>
+<option>Thriller</option>
+<option>Psychological</option>
+<option>Sci-Fi</option>
+</select>
+
+<select id="tone">
+<option>Dark</option>
+<option>Emotional</option>
+<option>Epic</option>
+<option>Tragic</option>
+<option>Calm</option>
+</select>
+
+<br>
+<button onclick="generateStory()">Generate</button>
+
+<div id="output"></div>
+
+<footer>
+© 2026 Arham — Aura Scribe
+</footer>
+
+<script>
+async function generateStory() {
+  const userPrompt = document.getElementById("prompt").value;
+  const genre = document.getElementById("genre").value;
+  const tone = document.getElementById("tone").value;
+  const output = document.getElementById("output");
+
+  output.innerHTML = "Generating...";
+
+  const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyB1XkN-2Y53wnDr_R78kf7aFrCx1PV3lTk", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [{
+        parts: [{
+          text: `
+You are a bestselling novelist.
+
+Write a long novel-style chapter (minimum 1200 words).
+
+Genre: ${genre}
+Tone: ${tone}
+
+Rules:
+- Avoid generic AI phrases
+- Use realistic dialogue
+- Show emotions through actions
+- Build tension slowly
+- Use vivid sensory details
+
+Story idea:
+${userPrompt}
+`
+        }]
+      }]
+    })
+  });
+
+  const data = await response.json();
+  output.innerHTML = data.candidates[0].content.parts[0].text;
+}
+</script>
+
+</body>
+</html>
